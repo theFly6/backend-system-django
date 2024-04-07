@@ -1,0 +1,101 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">新增任务</h3>
+            </div>
+            <div class="panel-body">
+                <form id="formAdd">{# novalidate关闭浏览器校验 #}
+                    <div class="clearfix">
+                        {% for item in form %}
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label>{{ item.label }}</label>
+                                    {{ item }}
+                                    <span style="color: red">{{ item.errors.0 }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="col-xs-12">
+                            <button id="btn_add" type="button" class="btn btn-primary">保 存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                任务列表
+            </div>
+
+            <!-- Table -->
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>级别</th>
+                    <th>标题</th>
+                    <th>详细信息</th>
+                    <th>负责人</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for obj in data_lst %}
+                    <tr>
+                        <th scope="row">{{ obj.id }}</th>
+                        <td>{{ obj.get_level_display }}</td>
+                        <td>{{ obj.title }}</td>
+                        <td>{{ obj.detail }}</td>
+                        <td>{{ obj.manager }}</td>
+                        <td>
+                            <a class="btn btn-primary btn-xs" href="/task/{{ obj.id }}/edit">编辑</a>
+                            <a class="btn btn-success btn-xs" href="/task/{{ obj.id }}/reset">重置</a>
+                            <a class="btn btn-danger btn-xs" href="/task/{{ obj.id }}/del">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function () {
+            // 绑定点击提交的ajax事件
+            binBtnAddEvent();
+        })
+
+        function binBtnAddEvent() {
+            $('#btn_add').click(function () {
+                $('span').empty()
+
+                $.ajax({
+                    url: "/task/add",
+                    type: "POST",
+                    data: $('#formAdd').serialize(),	// 自动
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.status) {
+                            {#window.location.href = '/task/list';#}
+                            location.reload()
+                        } else {
+                            $.each(res.errors, function (name, value) {
+                                $('#id_' + name).next().text(value[0])
+                            })
+                        }
+                    }
+                })
+            })
+        }
+
+    </script>
+{% endblock %}

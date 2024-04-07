@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ title }}</h3>
+            </div>
+            <div class="panel-body">
+                <form method="post" enctype="multipart/form-data" novalidate>{# novalidate关闭浏览器校验 #}
+                    {% csrf_token %}
+                    {% for item in form %}
+                        <div class="form-group">
+                            <label>{{ item.label }}</label>
+                            {{ item }}
+                            <span style="color: red">{{ item.errors.0 }}</span>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">保存修改</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                {{ lst_name }}列表
+            </div>
+
+            <!-- Table -->
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    {% for label in label_lst %}
+                        <th>{{ label }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for obj in data_lst %}
+                    <tr>
+                        <th scope="row">{{ obj.id }}</th>
+                        <td>{{ obj.name }}</td>
+                        <td>{{ obj.count }}{{ obj.age }}</td>
+                        <td>
+                            <img src="/media/{{ obj.img }}" alt="" style="height: 40px">
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

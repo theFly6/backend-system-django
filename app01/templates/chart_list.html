@@ -1,0 +1,187 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                折线图
+            </div>
+            <div class="panel-body">
+                <div id="m1" style="width: 100%;height:300px;"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        柱状图
+                    </div>
+                    <div class="panel-body">
+                        <div id="m2" style="width: 600px;height:400px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        饼图
+                    </div>
+                    <div class="panel-body">
+                        <div id="m3" style="width: 100%;height:400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            initLine()
+            initBar()
+            initPie()
+        })
+
+        function initLine() {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('m1'));
+            var option = {
+                title: {
+                    text: 'Stacked Line'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine'],
+                    bottom: 0
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: 'Email',
+                        type: 'line',
+                        stack: 'Total',
+                        data: [120, 132, 101, 134, 90, 230, 210]
+                    },
+                    {
+                        name: 'Union Ads',
+                        type: 'line',
+                        stack: 'Total',
+                        data: [220, 182, 191, 234, 290, 330, 310]
+                    },
+                    {
+                        name: 'Video Ads',
+                        type: 'line',
+                        stack: 'Total',
+                        data: [150, 232, 201, 154, 190, 330, 410]
+                    },
+                    {
+                        name: 'Direct',
+                        type: 'line',
+                        stack: 'Total',
+                        data: [320, 332, 301, 334, 390, 330, 320]
+                    },
+                ]
+            }
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        }
+
+        function initBar() {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('m2'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '销售记录',
+                    textAlign: "auto",
+                    left: "center",
+                    subtext: "计通学院"
+                },
+                tooltip: {},
+                legend: {
+                    data: ['销量', '收入'],
+                    bottom: 0
+                },
+                xAxis: {
+                    data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+                },
+                yAxis: {},
+            };
+            $.ajax({
+                url: '/chart/bar',
+                type: 'GET',
+                datatype: 'JSON',
+                success: function (res) {
+                    if (res.status) {
+                        option.series = res.series
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+                    }
+                }
+            })
+        }
+
+        function initPie() {
+            var myChart = echarts.init(document.getElementById('m3'));
+            var option = {
+                title: {
+                    text: '部门预算占比',
+                    subtext: '高工学院',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    bottom: 0
+                },
+                series: [
+                    {
+                        name: '预算',
+                        type: 'pie',
+                        radius: '50%',
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            $.ajax({
+                url: '/chart/pie',
+                type: 'GET',
+                datatype: 'JSON',
+                success: function (res) {
+                    if (res.status) {
+                        option.series[0].data = res.series
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+                    }
+                }
+            })
+        }
+        /**/
+    </script>
+{% endblock %}

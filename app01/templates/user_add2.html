@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">新增用户</h3>
+            </div>
+            <div class="panel-body">
+                <form method="post" novalidate>{# novalidate关闭浏览器校验 #}
+                    {% csrf_token %}
+                    {% for item in form %}
+                        <div class="form-group">
+                            <label>{{ item.label }}</label>
+                            {{ item }}
+                            <span style="color: red">{{ item.errors.0 }}</span>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">保 存</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <!-- Bootstrap的Datepicker所需js文件 -->
+    <script src="https://www.itxst.com/package/bootstrap-datepicker-1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://www.itxst.com/package/bootstrap-datepicker-1.9.0/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <link href="https://www.itxst.com/package/bootstrap-datepicker-1.9.0/css/bootstrap-datepicker.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap的Datepicker的jQuery代码 -->
+    <script>
+        $("#id_create_time").datepicker({
+            language: 'zh-CN', //设置语言
+            autoclose: true, //选择后自动关闭
+            clearBtn: true,//清除按钮
+            format: "yyyy-mm-dd"//日期格式
+        });
+    </script>
+{% endblock %}
